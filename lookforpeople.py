@@ -128,6 +128,6 @@ def main():
         output_dir='d:/YOLO/output',       
         conf=0.25                          
     )
-
+    # 测试git
 if __name__ == "__main__":
     main()
