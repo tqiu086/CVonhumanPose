@@ -42,6 +42,8 @@ def list_available_cameras(max_tested=10):
 
     return available_cameras
 
+# start doing anything
+
 if __name__ == "__main__":
     test_pose_estimation()
     list_available_cameras()
