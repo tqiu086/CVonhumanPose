@@ -62,7 +62,7 @@ def detect_people_from_camera(model_path='yolov8l.pt', camera_index=0, width=192
 
         # 按 'q' 键退出
         if cv2.waitKey(1) & 0xFF == ord('q'):
-            print("👋 检测已停止。")
+            print("检测已停止。")
             break
 
     cap.release()
@@ -112,22 +112,22 @@ def detect_people_in_image(image_path, model_path='yolov8l.pt', output_dir='outp
 
 def main():
     """主函数，用于调用检测方法。"""
-    # detect_people_from_camera(
-    #     model_path='yolov8l.pt', 
-    #     camera_index=0,
-    #     width=1920,
-    #     height=1080,
-    #     imgsz=1080,
-    #     conf=0.25
-    # )
-
-    image_path = 'd:/YOLO/input/people4.jpg' 
-    detect_people_in_image(
-        image_path=image_path,
-        model_path='yolov8l.pt',           
-        output_dir='d:/YOLO/output',       
-        conf=0.25                          
+    detect_people_from_camera(
+        model_path='yolov8l.pt', 
+        camera_index=0,
+        width=1920,
+        height=1080,
+        imgsz=1080,
+        conf=0.25
     )
+
+    # image_path = 'd:/YOLO/input/people4.jpg' 
+    # detect_people_in_image(
+    #     image_path=image_path,
+    #     model_path='yolov8l.pt',           
+    #     output_dir='d:/YOLO/output',       
+    #     conf=0.25                          
+    # )
     # 测试git
 if __name__ == "__main__":
     main()

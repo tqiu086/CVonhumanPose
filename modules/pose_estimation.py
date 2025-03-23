@@ -57,7 +57,7 @@ def pose_estimation(image_path, model_path='yolov8n-pose.pt', output_dir='output
         raise FileNotFoundError(f"图片路径不存在 -> {image_path}")
 
     model = YOLO(model_path)
-    print(f"✅ 成功加载模型: {model_path}")
+    print(f"成功加载模型: {model_path}")
 
     image = cv2.imread(image_path)
     if image is None:
@@ -73,4 +73,4 @@ def pose_estimation(image_path, model_path='yolov8n-pose.pt', output_dir='output
     os.makedirs(output_dir, exist_ok=True)
     output_path = os.path.join(output_dir, f"pose_detected_{os.path.basename(image_path)}")
     cv2.imwrite(output_path, image)
-    print(f"💾 检测结果已保存到: {output_path}")
+    print(f"检测结果已保存到: {output_path}")

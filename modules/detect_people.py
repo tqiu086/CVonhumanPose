@@ -15,14 +15,14 @@ def detect_people_in_image(image_path, model_path='yolov8l.pt', output_dir='outp
         conf (float): 检测置信度阈值。
     """
     if not os.path.exists(image_path):
-        raise FileNotFoundError(f"❌ 图片路径不存在 -> {image_path}")
+        raise FileNotFoundError(f"图片路径不存在 -> {image_path}")
 
     model = YOLO(model_path)
-    print(f"✅ 成功加载模型: {model_path}")
+    print(f"成功加载模型: {model_path}")
 
     original_image = cv2.imread(image_path)
     if original_image is None:
-        raise ValueError(f"❌ 无法读取图片 -> {image_path}")
+        raise ValueError(f"无法读取图片 -> {image_path}")
 
     results = model(original_image, conf=conf, classes=[0])
     annotated_image = results[0].plot()
