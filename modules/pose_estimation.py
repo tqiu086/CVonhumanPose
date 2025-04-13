@@ -6,41 +6,64 @@ import os
 
 def draw_pose_connections(image, keypoints, confidence_threshold=0.3):
     """
-    绘制人体关键点并连接形成火柴人。
+    绘制定制骨架：加入 neck 和 pelvis 两个中点，连接更合理。
 
     Args:
-        image (np.array): 输入图像。
-        keypoints (list): 关键点列表 [x, y, confidence]。
-        confidence_threshold (float): 关键点可视化置信度阈值。
+        image (np.array): 图像。
+        keypoints (list): 每人 [17, 3] 的关键点列表。
+        confidence_threshold (float): 最小置信度。
     """
-    # 修正后的 COCO 骨架连接关系 (去除索引 17)
+
     skeleton = [
-    (0, 5), (0, 6),           # 头部与肩膀
-    (5, 7), (7, 9),           # 左臂
-    (6, 8), (8, 10),          # 右臂
-    (5, 11), (6, 12),         # 肩膀到髋部（躯干）
-    (11, 13), (13, 15),       # 左腿
-    (12, 14), (14, 16),       # 右腿
-    (11, 12)                  # 髋部连接
-]
+        (1, 2),      # 左眼 - 右眼
+        (0, 17),     # 鼻子 - neck
+        (5, 7), (7, 9),    # 左臂
+        (6, 8), (8, 10),   # 右臂
+        (17, 5), (17, 6),  # neck - 肩
+        (18, 11), (18, 12),# pelvis - 髋
+        (11, 13), (13, 15),# 左腿
+        (12, 14), (14, 16),# 右腿
+        (17, 18)           # neck - pelvis
+    ]
 
-
-    # 绘制关键点和骨架
     for person in keypoints:
-        # 绘制关键点
-        for i, keypoint in enumerate(person):
-            x, y, conf = keypoint
+        keypts = person.tolist()
+
+        # -- 构造 neck --
+        if person[5][2] > confidence_threshold and person[6][2] > confidence_threshold:
+            neck = [
+                (person[5][0] + person[6][0]) / 2,
+                (person[5][1] + person[6][1]) / 2,
+                (person[5][2] + person[6][2]) / 2
+            ]
+        else:
+            neck = [0, 0, 0]
+
+        # -- 构造 pelvis --
+        if person[11][2] > confidence_threshold and person[12][2] > confidence_threshold:
+            pelvis = [
+                (person[11][0] + person[12][0]) / 2,
+                (person[11][1] + person[12][1]) / 2,
+                (person[11][2] + person[12][2]) / 2
+            ]
+        else:
+            pelvis = [0, 0, 0]
+
+        # 添加两个中点到关键点列表（作为索引 17、18）
+        keypts.append(neck)    # index 17
+        keypts.append(pelvis)  # index 18
+
+        # 绘制所有关键点
+        for x, y, conf in keypts:
             if conf > confidence_threshold:
                 cv2.circle(image, (int(x), int(y)), 4, (0, 255, 0), -1)
 
-        # 绘制骨架连接
-        for connection in skeleton:
-            start_idx, end_idx = connection
-            if (start_idx < len(person) and end_idx < len(person) and
-                person[start_idx][2] > confidence_threshold and person[end_idx][2] > confidence_threshold):
-                x1, y1 = int(person[start_idx][0]), int(person[start_idx][1])
-                x2, y2 = int(person[end_idx][0]), int(person[end_idx][1])
-                cv2.line(image, (x1, y1), (x2, y2), (255, 0, 0), 2)
+        # 绘制骨架线
+        for i, j in skeleton:
+            if keypts[i][2] > confidence_threshold and keypts[j][2] > confidence_threshold:
+                x1, y1 = int(keypts[i][0]), int(keypts[i][1])
+                x2, y2 = int(keypts[j][0]), int(keypts[j][1])
+                cv2.line(image, (x1, y1), (x2, y2), (255, 0, 255), 2)
 
 
 def pose_estimation(image_path, model_path='yolov8n-pose.pt', output_dir='output_pose', conf=0.3):

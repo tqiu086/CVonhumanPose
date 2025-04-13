@@ -7,7 +7,7 @@ from modules.pose_estimation import pose_estimation
 # For password storage 
 import unittest
 import requests
-from password_storage import PasswordStorage, read_passwords
+# from password_storage import PasswordStorage, read_passwords
 
 def test_pose_estimation(input_dir='pose', output_dir='pose_output', model_path='yolov8n-pose.pt', conf=0.3):
     if not os.path.exists(input_dir):
@@ -29,6 +29,7 @@ def test_pose_estimation(input_dir='pose', output_dir='pose_output', model_path=
     else:
         print(f"测试失败！输入: {len(input_files)} 张, 但输出: {len(output_files)} 张。")
         return False
+    
 def list_available_cameras(max_tested=10):
     available_cameras = []
     
@@ -218,4 +219,4 @@ class TestPasswordServices(unittest.TestCase):
 if __name__ == "__main__":
     test_pose_estimation()
     list_available_cameras()
-    unittest.main()
+    # unittest.main()
