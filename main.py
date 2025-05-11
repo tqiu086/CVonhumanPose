@@ -1,8 +1,8 @@
 # main.py
 from modules.detect_people import detect_people_in_image
 from modules.pose_estimation import pose_estimation
-
-
+from modules.which_pose import classify_pose
+from modules.camera_with_pose import real_time_pose_estimation
 def main():
     # 测试人物检测功能
     print("开始人物检测...")
@@ -26,4 +26,4 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
+    real_time_pose_estimation()

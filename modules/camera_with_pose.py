@@ -1,14 +1,14 @@
 import cv2
 from ultralytics import YOLO
-from which_pose import classify_pose
+from modules.which_pose import classify_pose
 import time
 import json
 import os
-
+import requests
 # 存储数字序列和定时器
 sequence = ""
 last_saved_time = 0
-output_path = r"C:\CSproject\yolo\CVonhumanPose\frontend\checkpassword.json"
+output_path = r"C:\CSproject\yolo\CVonhumanPose\backend\checkpassword.json"
 
 def draw_simplified_pose(image, keypoints, confidence_threshold=0.5):
     """
@@ -200,7 +200,20 @@ def real_time_pose_estimation(camera_index=0, model_path='yolov8l-pose.pt', conf
             with open(output_path, 'w', encoding='utf-8') as f:
                 json.dump({"password": sequence}, f, ensure_ascii=False)
                 print(f"💾 写入 JSON 成功: {output_path}")
+            SERVER_IP = "http://10.186.9.149:5000/upload"
+            # 要发送的 checkpassword 内容
+            data = {
+                "password": sequence
+            }
+
+            try:
+                response = requests.post(SERVER_IP, json=data)
+                print(f"Server response: {response.status_code} - {response.text}")
+            except Exception as e:
+                print(f"Error sending request: {e}")
             time.sleep(2)
+
+            
             break  # 退出摄像头
 
 

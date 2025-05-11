@@ -109,17 +109,24 @@ class PasswordSetter:
             else:
                 display_text += "_"
         self.display.config(text=display_text)
-    
+
     def submit_password(self):
         final_password = "".join(self.password)
         messagebox.showinfo(
             "Password Set",
             f"Password submitted: {final_password}"
         )
-        # Optional: Save to file
-        with open("password.json", "w") as f:
+        # 自动定位 ../backend/password.json 的路径
+        frontend_dir = os.path.dirname(os.path.abspath(__file__))
+        backend_dir = os.path.abspath(os.path.join(frontend_dir, "..", "backend"))
+        save_path = os.path.join(backend_dir, "password.json")
+
+        with open(save_path, "w") as f:
             json.dump({"password": final_password}, f)
+
         self.clear_password()
+
+
 
 if __name__ == "__main__":
     root = tk.Tk()
