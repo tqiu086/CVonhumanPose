@@ -1,32 +1,46 @@
+import tkinter as tk
+from tkinter import messagebox
 import json
 import os
 
-JSON_FILE = "password.json"
+def check_password():
+    try:
+        # Check if 'password.json' exists
+        if os.path.exists("password.json"):
+            with open("password.json", "r") as f:
+                data = json.load(f)
+                recorded_password = data.get("password", "No password recorded")
+                output_text.delete(1.0, tk.END)  # Clear previous text
+                output_text.insert(tk.END, f"Password found: {recorded_password}")
+        else:
+            output_text.delete(1.0, tk.END)
+            output_text.insert(tk.END, "Error: password.json not found")
+    except Exception as e:
+        messagebox.showerror("Error", f"An error occurred: {e}")
 
-def check_password(attempt):
-    """Check if attempt matches stored password (case insensitive)"""
-    if not os.path.exists(JSON_FILE):
-        return False
-    
-    with open(JSON_FILE, 'r') as f:
-        stored_pwd = json.load(f)["password"]
-        return stored_pwd == attempt.lower() 
+# Create the main window
+root = tk.Tk()
+root.title("Password Checker")
+root.geometry("400x200")
 
-def terminal_check_password():
-    print("Password Checker (type 'exit' to quit)")
-    while True:
-        try:
-            attempt = input("Enter password to check: ").strip()
-            if attempt.lower() == 'exit':
-                break
-                
-            if check_password(attempt):
-                print("TRUE - Correct password!")
-            else:
-                print("FALSE - Wrong password")
-        except KeyboardInterrupt:
-            break
-    print("Exiting password checker")
+# Output Textbox (Read-only)
+output_label = tk.Label(root, text="Password Status:")
+output_label.pack(pady=5)
 
-if __name__ == '__main__':
-    terminal_check_password()
+output_text = tk.Text(root, height=5, width=50, wrap=tk.WORD)
+output_text.pack(pady=5)
+output_text.config(state="normal")  # Allow writing (but user can't edit)
+
+# Check Button
+check_button = tk.Button(
+    root,
+    text="Check Password File",
+    command=check_password,
+    bg="#4CAF50",
+    fg="white",
+    font=("Arial", 10)
+)
+check_button.pack(pady=10)
+
+# Run the application
+root.mainloop()
